@@ -4,7 +4,7 @@ namespace Gateway.Helpers.Interfaces;
 
 public interface IJwtHelper
 {
-    long? ValidateJwtToken(string? token);
+    int? ValidateJwtToken(string? token);
     string GenerateJwtToken(User user);
     RefreshToken GenerateRefreshToken(int userId);
 }

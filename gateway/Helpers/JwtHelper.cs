@@ -43,7 +43,7 @@ public class JwtHelper : IJwtHelper
         return refreshToken;
     }
 
-    public long? ValidateJwtToken(string? token)
+    public int? ValidateJwtToken(string? token)
     {
         if (token == null)
             return null;

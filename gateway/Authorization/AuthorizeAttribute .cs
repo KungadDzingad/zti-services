@@ -11,7 +11,6 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
     public void OnAuthorization(AuthorizationFilterContext context)
     {
         var allowAnonymous = context.ActionDescriptor.EndpointMetadata.OfType<AllowAnonymousAttribute>().Any();
-        var authorizeAdmin = context.ActionDescriptor.EndpointMetadata.OfType<AuthorizeAdminAttribute>().Any();
         if (allowAnonymous)
             return;
 
