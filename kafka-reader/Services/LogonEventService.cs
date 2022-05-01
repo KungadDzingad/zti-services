@@ -18,8 +18,14 @@ public class LogonEventService : ILogonEventService
         await _collection.InsertOneAsync(logonEvent, null, cancellationToken);
     }
 
-    public Task<LastLogonTimeResponse> GetLastLogonTime(int userId, CancellationToken cancellationToken)
+    public async Task<LastLogonTimeResponse> GetLastLogonTime(int userId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var lastLogon = await _collection.Find(x => x.UserId == userId)
+            .SortByDescending(x => x.Time)
+            .FirstOrDefaultAsync();
+        return new LastLogonTimeResponse
+        {
+            LastLogonTime = lastLogon != null ? lastLogon.Time : null
+        };
     }
 }
