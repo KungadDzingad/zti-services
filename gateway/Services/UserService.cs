@@ -14,12 +14,14 @@ public class UserService : IUserService
     private readonly ILogger<UserService> _logger;
     private readonly IJwtHelper _jwtHelper;
     private readonly Models.DbContext _context;
+    private readonly IKafkaProducer _kafkaProducer;
 
-    public UserService(Models.DbContext context, IJwtHelper jwtHelper, ILogger<UserService> logger)
+    public UserService(Models.DbContext context, IJwtHelper jwtHelper, IKafkaProducer kafkaProducer, ILogger<UserService> logger)
     {
         _context = context;
         _jwtHelper = jwtHelper;
         _logger = logger;
+        _kafkaProducer = kafkaProducer;
     }
 
     public async Task AddUser(SignUpRequest request, CancellationToken cancellationToken)
@@ -105,6 +107,8 @@ public class UserService : IUserService
 
         _context.Update(user);
         await _context.SaveChangesAsync();
+
+        await _kafkaProducer.SendUserLoginOccurenceMessage(user.Id, cancellationToken);
 
         var response = new SignInResponse
         {

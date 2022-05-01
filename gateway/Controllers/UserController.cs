@@ -1,6 +1,8 @@
 namespace WebApi.Controllers;
 
+using System.Net;
 using System.Security.Authentication;
+using Confluent.Kafka;
 using Gateway.Authorization;
 using Gateway.Exceptions;
 using Gateway.Helpers;
@@ -30,7 +32,7 @@ public class UserController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("authenticate")]
-    public async Task<IActionResult> Authenticate(SignInRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> LogOn(SignInRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -77,9 +79,20 @@ public class UserController : ControllerBase
         }
     }
 
+    [AllowAnonymous]
     [HttpGet("test")]
-    public IActionResult test(CancellationToken cancellationToken)
+    public async Task<IActionResult> test(CancellationToken cancellationToken)
     {
+        var config = new ProducerConfig
+        {
+            BootstrapServers = "localhost:9092",
+            ClientId = Dns.GetHostName()
+        };
+        
+        using (var producer = new ProducerBuilder<Null, string>(config).Build())
+        {
+            await producer.ProduceAsync("test2", new Message<Null, string> { Value = "message"});
+        }
         return Ok();
     }
 
