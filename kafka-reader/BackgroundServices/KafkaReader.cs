@@ -1,9 +1,11 @@
 using Confluent.Kafka;
+using LogonEvents.Models;
 using LogonEvents.Services.Interfaces;
+using Newtonsoft.Json;
 
 namespace LogonEvents.BackgroundServices;
 
-public class KafkaReader : IHostedService, IDisposable
+public class KafkaReader : BackgroundService
 {
     private readonly ConsumerConfig _config;
     private readonly string _topic;
@@ -20,7 +22,7 @@ public class KafkaReader : IHostedService, IDisposable
         _topic = "test123";
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         using (var consumer = new ConsumerBuilder<Ignore, string>(_config).Build())
         {
@@ -30,27 +32,28 @@ public class KafkaReader : IHostedService, IDisposable
             {
 
                 var consumeResult = consumer.Consume(cancellationToken);
-                using (IServiceScope scope = _serviceProvider.CreateScope())
-                {
-                    ILogonEventService logonEventService =
-                        scope.ServiceProvider.GetRequiredService<ILogonEventService>();
 
-                    //await logonEventService.AddLogonEvent();
+                try
+                {
+
+                    LogonEvent? logonEvent = JsonConvert.DeserializeObject<LogonEvent>(consumeResult.Message.Value);
+                    
+                    if (logonEvent != null)
+                    {
+                        using (IServiceScope scope = _serviceProvider.CreateScope())
+                        {
+                            ILogonEventService logonEventService =
+                                scope.ServiceProvider.GetRequiredService<ILogonEventService>();
+
+                            await logonEventService.AddLogonEvent(logonEvent, cancellationToken);
+                        }
+                    }
                 }
-                
+                catch (Exception)
+                {}
             }
 
             consumer.Close();
         }
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
     }
 }
