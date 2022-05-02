@@ -21,6 +21,9 @@ SET time_zone = "+00:00";
 -- Baza danych: `zti-wyklad`
 --
 
+CREATE DATABASE `zti-wyklad`;
+USE `zti-wyklad`;
+
 -- --------------------------------------------------------
 
 --
