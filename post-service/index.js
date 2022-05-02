@@ -1,5 +1,6 @@
 const express = require("express");
 const postRouter = require("./api/posts");
+const eurekaHelper = require("./eureka-helper");
 
 const PORT = 3000;
 
@@ -14,3 +15,5 @@ app.listen(PORT, () => {
 app.get("/", (req, res) => {
   res.send("Hello world");
 });
+
+eurekaHelper.registerWithEureka("user-service", PORT);
