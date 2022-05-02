@@ -17,7 +17,7 @@ public class KafkaProducer : IKafkaProducer
             BootstrapServers = "localhost:9092",
             ClientId = Dns.GetHostName(),
         };
-        _topic = "test123";
+        _topic = "logonEvents";
     }
     public async Task SendUserLoginOccurenceMessage(int userId, CancellationToken cancellationToken)
     {

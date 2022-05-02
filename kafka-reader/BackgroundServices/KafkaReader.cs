@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace LogonEvents.BackgroundServices;
 
-public class KafkaReader : IHostedService
+public class KafkaReader : BackgroundService
 {
     private readonly ConsumerConfig _config;
     private readonly string _topic;
@@ -16,15 +16,15 @@ public class KafkaReader : IHostedService
         _config = new ConsumerConfig
         {
             BootstrapServers = "localhost:9092",
-            GroupId = "foo",
+            GroupId = "logonEventsConsumer",
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
-        _topic = "test123";
+        _topic = "logonEvents";
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _=Read(cancellationToken);
+        Task.Run(() => Read(stoppingToken));
         return Task.CompletedTask;
     }
 
@@ -60,10 +60,5 @@ public class KafkaReader : IHostedService
 
             consumer.Close();
         }
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
     }
 }
