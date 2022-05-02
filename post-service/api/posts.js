@@ -2,8 +2,36 @@ const express = require("express");
 
 const router = express.Router();
 
-router.get("/", (req, res) => {});
+const connection = require("../db/connection");
 
-router.post("/", (req, res) => {});
+router.get("/", (req, res) => {
+  connection.connect((err) => {
+    if (err) throw err;
+    const sql = `SELECT * FROM post`;
+    connection.query(sql, (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    });
+  });
+});
+
+router.post("/", (req, res) => {
+  connection.connect((err) => {
+    if (err) throw err;
+    const isoDate = new Date().toISOString();
+    const mySqlDate = new Date(isoDate).toJSON().slice(0, 19).replace("T", " ");
+    const sql = `INSERT INTO post (user_id, title, content, date) \
+    VALUES ( \
+        '${req.body.user_id}', \
+        '${req.body.title}', \
+        '${req.body.content}', \
+        '${mySqlDate}' \
+    \ )`;
+    connection.query(sql, (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    });
+  });
+});
 
 module.exports = router;
