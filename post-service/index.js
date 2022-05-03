@@ -1,6 +1,6 @@
 const express = require("express");
 const postRouter = require("./api/posts");
-const eurekaHelper = require("./eureka-helper");
+const eurekaHelper = require("./eureka/eureka");
 
 const PORT = 3000;
 
