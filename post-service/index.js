@@ -17,3 +17,4 @@ app.get("/", (req, res) => {
 });
 
 eurekaHelper.registerWithEureka("user-service", PORT);
+
