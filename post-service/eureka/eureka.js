@@ -1,12 +1,13 @@
 const Eureka = require("eureka-js-client").Eureka;
-const eurekaHost = "127.0.0.1";
+const eurekaHost = (process.env.EUREKA_CLIENT_SERVICEURL_DEFAULTZONE || '127.0.0.1');
 const eurekaPort = 8761;
-const hostName = "localhost";
-const ipAddr = "172.0.0.1";
+const hostName = (process.env.HOSTNAME || 'localhost')
+const ipAddr = "127.0.0.1";
 const dataCenterClassName = "";
-const dataCenterName = "";
-const servicePath = "";
+const dataCenterName = "MyOwn";
+const servicePath = "/eureka/apps/";
 
+// /
 exports.registerWithEureka = function (appName, PORT) {
   const client = new Eureka({
     instance: {
@@ -19,7 +20,7 @@ exports.registerWithEureka = function (appName, PORT) {
       },
       vipAddress: appName,
       dataCenterInfo: {
-        "@class": dataCenterClassName,
+        '@class': 'com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo',
         name: dataCenterName,
       },
     },
@@ -33,6 +34,7 @@ exports.registerWithEureka = function (appName, PORT) {
     },
   });
 
+  // client.start();
   client.logger.level("debug");
 
   client.start((error) => {
