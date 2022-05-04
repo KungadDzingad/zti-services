@@ -5,6 +5,9 @@ using Gateway.Models;
 using Gateway.Services;
 using Gateway.Services.Interfaces;
 using Microsoft.AspNetCore.HttpOverrides;
+using Steeltoe.Common.Http.Discovery;
+using Steeltoe.Discovery.Client;
+using WebApi.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDiscoveryClient();
+builder.Services.AddHttpClient("message-service",client => client.BaseAddress = new Uri("http://message-service/")).AddServiceDiscovery().AddTypedClient<GatewayController>();
 
 // DbContext
 builder.Services.AddDbContext<DbContext>();
@@ -39,13 +44,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseForwardedHeaders();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
+
+//app.UseDiscoveryClient();
 
 app.Run();

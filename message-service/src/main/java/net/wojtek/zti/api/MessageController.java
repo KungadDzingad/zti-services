@@ -33,7 +33,7 @@ public class MessageController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<MessageResponse> getConversationMessages(@RequestParam int senderId, @RequestParam int receiverId){
+    public List<MessageResponse> getConversationMessages(@RequestHeader("user-id") int senderId, @RequestParam int receiverId){
         User sender = userService.getUserById(senderId);
         User receiver = userService.getUserById(receiverId);
 //        return messageService.getConversationMessages(sender, receiver);

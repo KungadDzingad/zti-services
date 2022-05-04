@@ -23,5 +23,9 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
                 StatusCode = StatusCodes.Status401Unauthorized
             };
         }
+        else
+        {
+            context.HttpContext.Request.Headers.Add("user-id", user.Id.ToString());
+        }
     }
 }
