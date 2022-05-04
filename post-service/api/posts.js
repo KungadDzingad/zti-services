@@ -16,13 +16,14 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", (req, res) => {
+  const userId = req.headers["userid"];
   connection.connect((err) => {
     if (err) throw err;
     const isoDate = new Date().toISOString();
     const mySqlDate = new Date(isoDate).toJSON().slice(0, 19).replace("T", " ");
     const sql = `INSERT INTO post (user_id, title, content, date) \
     VALUES ( \
-        '${req.body.user_id}', \
+        '${userId}', \
         '${req.body.title}', \
         '${req.body.content}', \
         '${mySqlDate}' \
