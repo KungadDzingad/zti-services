@@ -7,7 +7,6 @@ using Gateway.Services.Interfaces;
 using Microsoft.AspNetCore.HttpOverrides;
 using Steeltoe.Common.Http.Discovery;
 using Steeltoe.Discovery.Client;
-using WebApi.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +22,11 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDiscoveryClient();
-builder.Services.AddHttpClient("message-service",client => client.BaseAddress = new Uri("http://message-service/")).AddServiceDiscovery().AddTypedClient<GatewayController>();
+builder.Services.AddHttpClient("message-service",client => client.BaseAddress = new Uri("http://message-service/")).AddServiceDiscovery();
+builder.Services.AddDiscoveryClient();
+builder.Services.AddHttpClient("posts-service",client => client.BaseAddress = new Uri("http://localhost:3000/")).AddServiceDiscovery();
+builder.Services.AddDiscoveryClient();
+builder.Services.AddHttpClient("logon-events",client => client.BaseAddress = new Uri("https://localhost:7194/")).AddServiceDiscovery();
 
 // DbContext
 builder.Services.AddDbContext<DbContext>();
@@ -46,12 +49,10 @@ if (app.Environment.IsDevelopment())
 }
 app.UseForwardedHeaders();
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
-
-//app.UseDiscoveryClient();
 
 app.Run();

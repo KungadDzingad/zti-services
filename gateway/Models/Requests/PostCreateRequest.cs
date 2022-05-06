@@ -1,7 +1,7 @@
 namespace Gateway.Models.Requests;
 
-public class MessageCreateRequest
+public class PostCreateRequest
 {
-    public int ReceiverId{ get; set; }
+    public String Title{ get; set; } = null!;
     public String Content{ get; set; } = null!;
 }

@@ -25,8 +25,8 @@ public class MessageController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void createMessage(@RequestBody CreateMessageRequest createMessageRequest){
-        User sender = userService.getUserById(createMessageRequest.getSenderId());
+    public void createMessage(@RequestHeader("user-id") int senderId, @RequestBody CreateMessageRequest createMessageRequest){
+        User sender = userService.getUserById(senderId);
         User receiver = userService.getUserById(createMessageRequest.getReceiverId());
         messageService.createMessage(sender, receiver, createMessageRequest.getContent());
     }

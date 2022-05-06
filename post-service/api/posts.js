@@ -16,7 +16,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const userId = req.headers["userid"];
+  const userId = req.headers["user-id"];
   connection.connect((err) => {
     if (err) throw err;
     const isoDate = new Date().toISOString();
